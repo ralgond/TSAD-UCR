@@ -130,3 +130,5 @@ dmypy.json
 genta/error_pos.txt
 genta/finddiscord/
 genta/algorithms/
+
+.data/
