@@ -3,6 +3,10 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
+import torch
+import numpy as np
+import random
+
 class UCRDataset(Dataset):
     def __init__(self, ts, win_size) -> None:
         super().__init__()
@@ -38,3 +42,21 @@ class Interpolation(nn.Module):
         self.scale_factor = scale_factor
     def forward(self, x):
         return F.interpolate(x, scale_factor=self.scale_factor)
+
+
+
+def set_seed(seed):
+
+    random.seed(seed)
+    np.random.seed(seed)
+    if torch.cuda.is_available():
+        torch.cuda.manual_seed_all(seed)
+
+    torch.manual_seed(seed)
+    torch.cuda.manual_seed(seed)
+    torch.cuda.manual_seed_all(seed)
+
+    # Remove randomness (may be slower on Tesla GPUs) 
+    # https://pytorch.org/docs/stable/notes/randomness.html
+    torch.backends.cudnn.deterministic = True
+    torch.backends.cudnn.benchmark = False

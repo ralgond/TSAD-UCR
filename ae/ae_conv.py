@@ -3,7 +3,7 @@ import torch.nn as nn
 from torch.utils.data import DataLoader
 import torch.optim as optim
 from ucr_dataset import get_data
-from common import UCRDataset, UCRDatasetForTest, Sigmoid, Interpolation
+from common import UCRDataset, UCRDatasetForTest, Sigmoid, Interpolation, set_seed
 import time
 import matplotlib.pyplot as plt
 from ae_trainer import train
@@ -41,6 +41,8 @@ class AE_Conv(nn.Module):
         return decoded
 
 if __name__ == "__main__":
+    set_seed(42)
+
     train_data, test_data = get_data(1)
 
     ae = AE_Conv()
