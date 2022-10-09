@@ -13,12 +13,12 @@ class AE_Conv(nn.Module):
         super().__init__()
 
         self.encoder = nn.Sequential(
-            nn.Conv1d(1, 8, 5, padding=2),
+            nn.Conv1d(1, 8, 5, padding=2, bias=False),
             nn.BatchNorm1d(8, eps=1e-04, affine=False),
             nn.ReLU(),
             nn.MaxPool1d(2),
 
-            nn.Conv1d(8, 4, 5, padding=2),
+            nn.Conv1d(8, 4, 5, padding=2, bias=False),
             nn.BatchNorm1d(4, eps=1e-04, affine=False),
             nn.ReLU(),
             nn.MaxPool1d(2)
@@ -26,11 +26,11 @@ class AE_Conv(nn.Module):
 
         self.decoder = nn.Sequential(
             Interpolation(2),
-            nn.ConvTranspose1d(4, 8, 5, padding=2),
+            nn.ConvTranspose1d(4, 8, 5, padding=2, bias=False),
             nn.ReLU(),
             
             Interpolation(2),
-            nn.ConvTranspose1d(8, 1, 5, padding=2),
+            nn.ConvTranspose1d(8, 1, 5, padding=2, bias=False),
             
             Sigmoid()
         )

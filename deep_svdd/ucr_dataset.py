@@ -1,5 +1,6 @@
 import os
 import numpy as np
+from sklearn.preprocessing import MinMaxScaler
 
 def analyze_filename(fn):
     x = fn.split('.')[0].split('_')
@@ -23,3 +24,14 @@ def get_series(num):
     
     return l, train_test_split_pos, abnormal_range
 
+def get_data(num):
+    all_data, split_pos, anomaly_range = get_series(num)
+    train_data, test_data = np.array(all_data[:split_pos]), np.array(all_data[split_pos:])
+
+    scaler = MinMaxScaler((0, 1))
+    scaler.fit(train_data.reshape(-1, 1))
+
+    train_data = scaler.transform(train_data.reshape(-1, 1))
+    test_data = scaler.transform(test_data.reshape(-1, 1))
+
+    return train_data.squeeze(1), test_data.squeeze(1)
