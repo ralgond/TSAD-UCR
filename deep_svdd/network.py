@@ -1,16 +1,17 @@
-from turtle import forward
-import torch
 import torch.nn as nn
-from torch.utils.data import DataLoader
-import torch.optim as optim
-from ucr_dataset import get_data
-from common import UCRDataset, UCRDatasetForTest, Sigmoid, Interpolation, set_seed
-import time
-import matplotlib.pyplot as plt
+from common import Sigmoid, Interpolation
 
 class Flatten(nn.Module):
     def forward(self, x):
         return x.view(x.size(0), -1)
+
+class UnFlatten(nn.Module):
+    def __init__(self, channel) -> None:
+        super().__init__()
+        self.channel = channel
+    def forward(self, x):
+        return x.view(x.size(0), self.channel, -1)
+
 class Print(nn.Module):
     def __init__(self, info) -> None:
         super().__init__()
@@ -34,17 +35,23 @@ class AE_Conv_128(nn.Module):
             nn.ReLU(),
             nn.MaxPool1d(2), #32
 
-            Print("A"),
-            nn.Linear(4 * 32, 32, bias=False)
+            Flatten(),
+            #Print("A"),
+            nn.Linear(128, 32, bias=False), # compress into a (32,) vector
+            #Print("B"),
         )
+        self.encoder.__setattr__("rep_dim", 32)
 
         self.decoder = nn.Sequential(
-            Interpolation(2),
-            nn.ConvTranspose1d(4, 8, 5, padding=2),
+            UnFlatten(4),
+            #Print("C"),
+
+            Interpolation(4),
+            nn.ConvTranspose1d(4, 8, 5, padding=2, bias=False),
             nn.ReLU(),
             
-            Interpolation(2),
-            nn.ConvTranspose1d(8, 1, 5, padding=2),
+            Interpolation(4),
+            nn.ConvTranspose1d(8, 1, 5, padding=2, bias=False),
             
             Sigmoid()
         )
@@ -54,7 +61,3 @@ class AE_Conv_128(nn.Module):
         decoded = self.decoder(encoded)
         return decoded
 
-if __name__ == "__main__":
-    data = torch.randn(20, 1, 128)
-    ae = AE_Conv_128()
-    ae(data)

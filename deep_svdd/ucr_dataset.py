@@ -34,4 +34,4 @@ def get_data(num):
     train_data = scaler.transform(train_data.reshape(-1, 1))
     test_data = scaler.transform(test_data.reshape(-1, 1))
 
-    return train_data.squeeze(1), test_data.squeeze(1)
+    return train_data.squeeze(1), test_data.squeeze(1), anomaly_range
