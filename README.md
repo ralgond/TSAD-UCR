@@ -1,6 +1,10 @@
 # TSAD-UCR
 Anomaly Detection Solutions for KDD2021 UCR dataset
 
+## How to run
+Download ucr data from [here](https://github.com/ralgond/KDD2021-UCR), and create a directory named ".data" in this repo directory,
+unzip the downloaded data to ".data".
+
 ## 得分
 |solution name|score|resources|
 |-------------|-----|---------|
