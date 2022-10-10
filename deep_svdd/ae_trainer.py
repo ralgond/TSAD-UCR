@@ -7,12 +7,12 @@ from common import UCRDataset, UCRDatasetForTest, Sigmoid
 import time
 import matplotlib.pyplot as plt
 
-def train(train_data, test_data, ae, loader_for_train, optimizer, criterion, add_channel=False, n_epoch=10):
+def train(train_data, test_data, ae, loader_for_train, optimizer, criterion, add_channel=False, n_epochs=10):
         
     ae.to("cuda")
 
     ae.train()
-    for epoch in range(n_epoch):
+    for epoch in range(n_epochs):
         loss = 0
         start_time = time.time()
         for data in loader_for_train:

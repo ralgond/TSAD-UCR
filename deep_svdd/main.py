@@ -1,6 +1,6 @@
 from common import set_seed
 from ucr_dataset import get_data
-from network import AE_Conv_128
+from network import AE_Conv_128, AE_Conv_192
 import torch
 import torch.nn as nn
 from torch.utils.data import DataLoader
@@ -11,13 +11,28 @@ from ae_trainer import train
 from deep_svdd_trainer import DeepSVDDTrainer
 import numpy as np
 
-def main1(train_data, test_data):
-    ae = AE_Conv_128()
-    loader_for_train = DataLoader(UCRDataset(train_data, 128), batch_size=512, shuffle=False)
+def main1(train_data, test_data, WIN_SIZE=128):
+    ae = None
+    if WIN_SIZE == 128:
+        ae = AE_Conv_128()
+    elif WIN_SIZE == 192:
+        ae = AE_Conv_192()
+    else:
+        raise NotImplementedError()
+
+    loader_for_train = DataLoader(UCRDataset(train_data, WIN_SIZE), batch_size=512, shuffle=False)
     optimizer = optim.Adam(ae.parameters(), lr=1e-3)
     criterion = nn.MSELoss()
 
-    ae = train(train_data, test_data, ae, loader_for_train, optimizer, criterion, add_channel=True)
+    ae = train(train_data, test_data, ae, loader_for_train, optimizer, criterion, add_channel=True, n_epochs=5)
+
+    deep_svdd_trainer = DeepSVDDTrainer('soft-boundary', 0, None, 0.1, n_epochs=15)
+    deep_svdd_trainer.train(loader_for_train, ae.encoder)
+
+    loader_for_test = DataLoader(UCRDataset(test_data, WIN_SIZE), batch_size=512, shuffle=False)
+    scores = deep_svdd_trainer.test(loader_for_test, ae.encoder)
+
+    return scores
 
     # loader_for_test = DataLoader(UCRDatasetForTest(train_data, 128), batch_size=100)
 
@@ -37,22 +52,21 @@ def main1(train_data, test_data):
     # plt.plot([i for i in range(len(logits_data))], logits_data)
     # plt.show()
 
-    deep_svdd_trainer = DeepSVDDTrainer('soft-boundary', 0, None, 0.1, n_epochs=20)
-    deep_svdd_trainer.train(loader_for_train, ae.encoder)
+    
 
-    loader_for_test = DataLoader(UCRDataset(test_data, 128), batch_size=512, shuffle=False)
-    scores = deep_svdd_trainer.test(loader_for_test, ae.encoder)
-
-    print ("============>scores.length:", len(scores))
-    return scores
+    
 
 def main(file_no:int):
     set_seed(42)
-    SEQ_LEN = 128
+
+    WIN_SIZE = 192
 
     train_data, test_data, anomaly_range = get_data(file_no)
-    scores = main1(train_data, test_data)
+
+    scores = main1(train_data, test_data, WIN_SIZE)
+    
     correct_range = (anomaly_range[0]-100, anomaly_range[1]+100)
+
     pred_pos = np.argmax(scores) + len(train_data)
 
     if (pred_pos >= correct_range[0] and pred_pos <= correct_range[1]):
