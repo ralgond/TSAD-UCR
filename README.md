@@ -5,3 +5,4 @@ Solutions for KDD2021 UCR dataset
 |solution name|score|
 |-------------|-----|
 | genta       | 83.6|
+| deep svdd   | 32.8|
