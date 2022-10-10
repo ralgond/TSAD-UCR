@@ -1,5 +1,5 @@
 # TSAD-UCR
-Solutions for KDD2021 UCR dataset
+Anomaly Detection Solutions for KDD2021 UCR dataset
 
 ## 得分
 |solution name|score|resources|
