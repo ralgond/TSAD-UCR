@@ -59,7 +59,7 @@ def main1(train_data, test_data, WIN_SIZE=128):
 def main(file_no:int):
     set_seed(42)
 
-    WIN_SIZE = 192
+    WIN_SIZE = 128
 
     train_data, test_data, anomaly_range = get_data(file_no)
 
@@ -78,7 +78,7 @@ if __name__ == "__main__":
     correct_cnt = 0
     error_cnt = 0
 
-    for i in range(1,26):
+    for i in range(1,251):
         ret = main(i)
 
         if (ret > 0):
