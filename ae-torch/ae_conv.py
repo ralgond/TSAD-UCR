@@ -96,7 +96,7 @@ def main(file_no:int):
 if __name__ == "__main__":
     correct_count = 0
     error_count = 0
-    for i in range(1,26):
+    for i in range(26,251):
         result = main(i)
         status = None
         if result > 0:
