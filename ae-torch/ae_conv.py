@@ -8,6 +8,7 @@ import time
 import matplotlib.pyplot as plt
 from ae_trainer import train
 from sklearn.metrics import mean_absolute_error, mean_squared_error
+from sklearn.metrics.pairwise import euclidean_distances
 import numpy as np
 
 
@@ -56,7 +57,7 @@ def main(file_no:int):
     optimizer = optim.Adam(ae.parameters(), lr=1e-3)
     criterion = nn.MSELoss()
 
-    ae = train(train_data, test_data, ae, loader_for_train, optimizer, criterion, add_channel=True, n_epoch=30)
+    ae = train(train_data, test_data, ae, loader_for_train, optimizer, criterion, add_channel=True, n_epoch=10)
 
     loader_for_test = DataLoader(UCRDataset(test_data, WIN_SIZE), batch_size=512, shuffle=False)
 
@@ -83,9 +84,12 @@ def main(file_no:int):
     
     X_score = []
     for test, pred in zip(X_test, X_pred):
-        score = mean_squared_error(test, pred)
+        #print(np.array(test).shape, np.array(pred).shape)
+        score = euclidean_distances(np.expand_dims(test, 0), np.expand_dims(pred, 0))
         X_score.append(score)
 
+    # print ("+++++++++++++X_score.len:", len(X_score))
+    # print ("+++++++++++++X_score[0].shape:", X_score[0].shape)
     correct_range = (anomaly_range[0]-100, anomaly_range[1]+100)
     pos = np.argmax(X_score) + len(train_data)
     if pos >= correct_range[0] and pos <= correct_range[1]:
@@ -96,7 +100,7 @@ def main(file_no:int):
 if __name__ == "__main__":
     correct_count = 0
     error_count = 0
-    for i in range(26,251):
+    for i in range(1,1+25):
         result = main(i)
         status = None
         if result > 0:
