@@ -6,9 +6,10 @@ Download ucr data from [here](https://github.com/ralgond/KDD2021-UCR), and creat
 unzip the downloaded data to ".data".
 
 ## 得分
-|solution name|score|resources|
-|-------------|-----|---------|
-| genta       | 83.6|[Video](https://www.youtube.com/watch?v=J_Ebbql9jCo)|
-| deep svdd (torch)  | 32.8| deep_svdd, 参考[Code](https://github.com/lukasruff/Deep-SVDD-PyTorch)|
-| vanilla_ae  | 29.2| ae-torch/ae_conv.py |
-| vanilla_vae | 27.6| ae-tf/vae.py |
+|solution name|score|directory|resources|
+|-------------|-----|---------|---------|
+| genta       | 83.6|genta    |[Video](https://www.youtube.com/watch?v=J_Ebbql9jCo)|
+| deep svdd (tf) | 44.4 | deep_svdd-tf | 参考[Code](https://github.com/lukasruff/Deep-SVDD-PyTorch)|
+| deep svdd (torch)  | 32.8| deep_svdd | 参考[Code](https://github.com/lukasruff/Deep-SVDD-PyTorch)|
+| vanilla_ae  | 29.2| ae-torch/ae_conv.py ||
+| vanilla_vae | 27.6| ae-tf/vae.py ||
