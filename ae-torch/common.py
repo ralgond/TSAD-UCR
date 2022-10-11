@@ -32,18 +32,24 @@ class UCRDatasetForTest(Dataset):
         return torch.tensor(self.ts[self.win_size*index : self.win_size*index+self.win_size], dtype=torch.float32)
 
 
-class Sigmoid(nn.Module):
+class SigmoidLayer(nn.Module):
     def forward(self, x):
         return torch.sigmoid(x)
 
-class Interpolation(nn.Module):
+class InterpolationLayer(nn.Module):
     def __init__(self, scale_factor) -> None:
         super().__init__()
         self.scale_factor = scale_factor
     def forward(self, x):
         return F.interpolate(x, scale_factor=self.scale_factor)
 
-
+class PrintLayer(nn.Module):
+    def __init__(self, info) -> None:
+        super().__init__()
+        self.info = info
+    def forward(self, x):
+        print (self.info,"x.shape:", x.shape)
+        return x
 
 def set_seed(seed):
 

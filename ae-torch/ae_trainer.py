@@ -3,7 +3,7 @@ import torch.nn as nn
 from torch.utils.data import DataLoader
 import torch.optim as optim
 from ucr_dataset import get_data
-from common import UCRDataset, UCRDatasetForTest, Sigmoid
+from common import UCRDataset, UCRDatasetForTest, SigmoidLayer
 import time
 import matplotlib.pyplot as plt
 
