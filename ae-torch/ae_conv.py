@@ -57,7 +57,7 @@ def main(file_no:int):
     optimizer = optim.Adam(ae.parameters(), lr=1e-3)
     criterion = nn.MSELoss()
 
-    ae = train(train_data, test_data, ae, loader_for_train, optimizer, criterion, add_channel=True, n_epoch=10)
+    ae = train(train_data, test_data, ae, loader_for_train, optimizer, criterion, add_channel=True, n_epoch=30)
 
     loader_for_test = DataLoader(UCRDataset(test_data, WIN_SIZE), batch_size=512, shuffle=False)
 
@@ -85,7 +85,8 @@ def main(file_no:int):
     X_score = []
     for test, pred in zip(X_test, X_pred):
         #print(np.array(test).shape, np.array(pred).shape)
-        score = euclidean_distances(np.expand_dims(test, 0), np.expand_dims(pred, 0))
+        #score = euclidean_distances(np.expand_dims(test, 0), np.expand_dims(pred, 0))
+        score = mean_squared_error(test, pred)
         X_score.append(score)
 
     # print ("+++++++++++++X_score.len:", len(X_score))
