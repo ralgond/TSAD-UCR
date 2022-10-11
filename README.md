@@ -10,4 +10,4 @@ unzip the downloaded data to ".data".
 |-------------|-----|---------|
 | genta       | 83.6|[Video](https://www.youtube.com/watch?v=J_Ebbql9jCo)|
 | deep svdd   | 32.8|[Code](https://github.com/lukasruff/Deep-SVDD-PyTorch)|
-| vanilla_ae  | 25.2| ae-torch/ae_conv.py |
+| vanilla_ae  | 29.2| ae-torch/ae_conv.py |
