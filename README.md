@@ -9,6 +9,7 @@ unzip the downloaded data to ".data".
 |solution name|score|directory|resources|
 |-------------|-----|---------|---------|
 | genta       | 83.6|genta    |[Video](https://www.youtube.com/watch?v=J_Ebbql9jCo)|
+| matrix-profile-1| 50.4| matrixprofile-1| |
 | deep svdd (tf) | 44.4 | deep_svdd-tf | 参考[Code](https://github.com/lukasruff/Deep-SVDD-PyTorch)|
 | deep svdd (torch)  | 32.8| deep_svdd | 参考[Code](https://github.com/lukasruff/Deep-SVDD-PyTorch)|
 | vanilla_ae  | 29.2| ae-torch/ae_conv.py ||
