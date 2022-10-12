@@ -12,4 +12,4 @@ unzip the downloaded data to ".data".
 | deep svdd (tf) | 44.4 | deep_svdd-tf | 参考[Code](https://github.com/lukasruff/Deep-SVDD-PyTorch)|
 | deep svdd (torch)  | 32.8| deep_svdd | 参考[Code](https://github.com/lukasruff/Deep-SVDD-PyTorch)|
 | vanilla_ae  | 29.2| ae-torch/ae_conv.py ||
-| vanilla_vae | 27.6| ae-tf/vae.py ||
+| vanilla_vae | 27.6| ae-tf/vae.py | 参考[Doc](https://keras.io/examples/generative/vae/)|
