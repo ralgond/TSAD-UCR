@@ -2,6 +2,7 @@ import pyscamp as mp
 from ucr_dataset import get_series
 import numpy as np
 from sklearn.preprocessing import MinMaxScaler
+import rolling
 
 def minmax_scale(l):
     scaler = MinMaxScaler()
@@ -14,17 +15,22 @@ def tail_padding_zero(l, length):
         ret.append(0)
     return ret
 
+def aggregate(ts, win_size=10):
+    return list(rolling.Mean(ts, win_size))
+
 def main(file_no):
     all_data, split_pos, anomaly_range = get_series(file_no)
+    
+    all_data = aggregate(all_data, win_size=5)
 
     train_data, test_data = all_data[:split_pos], all_data[split_pos:]
 
     profile_list = []
     for win_size in [8,16,32,64,96,128,256,320,512]:
-        profile, _ = mp.abjoin(test_data, train_data, win_size)
-        scaled_profile = minmax_scale(profile)
-        scaled_padding_profile = tail_padding_zero(scaled_profile, len(test_data))
-        profile_list.append(scaled_padding_profile)
+        # profile, _ = mp.abjoin(test_data, train_data, win_size)
+        # scaled_profile = minmax_scale(profile)
+        # scaled_padding_profile = tail_padding_zero(scaled_profile, len(test_data))
+        # profile_list.append(scaled_padding_profile)
 
         profile, _ = mp.selfjoin(test_data, win_size)
         scaled_profile = minmax_scale(profile)
