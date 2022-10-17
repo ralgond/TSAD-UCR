@@ -14,3 +14,4 @@ unzip the downloaded data to ".data".
 | deep svdd (torch)  | 32.8| deep_svdd | 参考[Code](https://github.com/lukasruff/Deep-SVDD-PyTorch)|
 | vanilla_ae  | 29.2| ae-torch/ae_conv.py ||
 | vanilla_vae | 27.6| ae-tf/vae.py | 参考[Doc](https://keras.io/examples/generative/vae/)|
+| Isolation Forest | 23.6 | IF| [Doc](https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.IsolationForest.html#sklearn.ensemble.IsolationForest.score_samples) |
