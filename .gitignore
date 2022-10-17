@@ -133,3 +133,9 @@ genta/algorithms/
 
 .data/
 deep_svdd-backup/
+TranAD/
+matrixprofile-cluster/
+matrixprofile-1-aggregate/
+LstmAE-origin/
+anomaly-transformer/
+orion/
