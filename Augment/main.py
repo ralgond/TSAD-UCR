@@ -77,7 +77,8 @@ class AugmentNet(nn.Module):
         self.bn1 = nn.BatchNorm1d(8)
         self.conv2 = nn.Conv1d(8, 16, 3, padding=1)
         self.bn2 = nn.BatchNorm1d(16)
-        self.fc = nn.Linear(512, 1)
+        self.fc1 = nn.Linear(512, 64)
+        self.fc2 = nn.Linear(64, 1)
 
     def forward(self, x):
         x = self.conv1(x)
@@ -90,7 +91,8 @@ class AugmentNet(nn.Module):
         x = F.relu(x)
         x = self.pool(x)
         x = torch.flatten(x, 1)
-        x = self.fc(x)
+        x = self.fc1(x)
+        x = self.fc2(x)
 
         return torch.sigmoid(x)
 
@@ -197,7 +199,7 @@ def main(file_no):
 
     all_data = minmax_scale(all_data)
 
-    all_data = aggregate(all_data, win_size=5)
+    #all_data = aggregate(all_data, win_size=5)
 
     train_data, test_data = all_data[:split_pos], all_data[split_pos:]
 
