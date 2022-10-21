@@ -74,9 +74,9 @@ class AugmentNet(nn.Module):
     def __init__(self) -> None:
         super().__init__()
         self.pool = nn.MaxPool1d(2)
-        self.conv1 = nn.Conv1d(1, 8, 5, padding=2)
+        self.conv1 = nn.Conv1d(1, 8, 7, padding='same')
         self.bn1 = nn.BatchNorm1d(8)
-        self.conv2 = nn.Conv1d(8, 16, 5, padding=2)
+        self.conv2 = nn.Conv1d(8, 16, 7, padding='same')
         self.bn2 = nn.BatchNorm1d(16)
         self.fc1 = nn.Linear(512, 64)
         self.fc2 = nn.Linear(64, 1)
@@ -196,11 +196,13 @@ def aggregate(ts, win_size=10):
     return list(rolling.Mean(ts, win_size))
 
 def main(file_no):
+    set_seed(file_no)
+
     all_data, split_pos, anomaly_range = get_series(file_no)
 
     all_data = minmax_scale(all_data)
 
-    #all_data = aggregate(all_data, win_size=5)
+    #all_data = aggregate(all_data, win_size=10)
 
     train_data, test_data = all_data[:split_pos], all_data[split_pos:]
 
@@ -228,8 +230,6 @@ def main(file_no):
         return -1
 
 if __name__ == "__main__":
-    set_seed(42)
-
     correct_cnt = 0
     error_cnt = 0
 
