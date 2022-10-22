@@ -48,25 +48,25 @@ def augament(ts):
         i = random.randint(0,100) % 9
         X = np.array(ts)
         if i == 0:
-            ret.append(tsaug.AddNoise(scale=0.01).augment(X))
+            ret.append(tsaug.AddNoise(scale=0.1).augment(X))
         if i == 1:
-            ret.append(tsaug.Convolve(window="flattop", size=11).augment(X))
+            ret.append(tsaug.Convolve(window="flattop", size=20).augment(X))
         if i == 2:
             term = tsaug.Crop(size=100).augment(X)
             ret.append(tail_padding_zero(term, len(X)))
         if i == 3:
-            ret.append(tsaug.Drift(max_drift=0.7, n_drift_points=5).augment(X))
+            ret.append(tsaug.Drift(max_drift=0.7, n_drift_points=10).augment(X))
         if i == 4:
-            ret.append(tsaug.Pool(size=2).augment(X))
+            ret.append(tsaug.Pool(size=10).augment(X))
         if i == 5:
-            ret.append(tsaug.Quantize(n_levels=20).augment(X))
+            ret.append(tsaug.Quantize(n_levels=50).augment(X))
         if i == 6:
             term = tsaug.Resize(size=100).augment(X)
             ret.append(tail_padding_zero(term, len(X)))
         if i == 7:
             ret.append(tsaug.Reverse().augment(X))
         if i == 8:
-            ret.append(tsaug.TimeWarp(n_speed_change=5, max_speed_ratio=3).augment(X))
+            ret.append(tsaug.TimeWarp(n_speed_change=10, max_speed_ratio=3).augment(X))
     
     return ret
 
