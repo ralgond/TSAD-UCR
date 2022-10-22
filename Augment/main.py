@@ -74,9 +74,9 @@ class AugmentNet(nn.Module):
     def __init__(self) -> None:
         super().__init__()
         self.pool = nn.MaxPool1d(2)
-        self.conv1 = nn.Conv1d(1, 8, 7, padding='same')
+        self.conv1 = nn.Conv1d(1, 8, 10, padding='same')
         self.bn1 = nn.BatchNorm1d(8)
-        self.conv2 = nn.Conv1d(8, 16, 7, padding='same')
+        self.conv2 = nn.Conv1d(8, 16, 10, padding='same')
         self.bn2 = nn.BatchNorm1d(16)
         self.fc1 = nn.Linear(512, 64)
         self.fc2 = nn.Linear(64, 1)
