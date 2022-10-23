@@ -55,18 +55,18 @@ def augament(ts):
             term = tsaug.Crop(size=100).augment(X)
             ret.append(tail_padding_zero(term, len(X)))
         if i == 3:
-            ret.append(tsaug.Drift(max_drift=0.7, n_drift_points=10).augment(X))
+            ret.append(tsaug.Drift(max_drift=0.7, n_drift_points=20).augment(X))
         if i == 4:
-            ret.append(tsaug.Pool(size=10).augment(X))
+            ret.append(tsaug.Pool(size=40).augment(X))
         if i == 5:
-            ret.append(tsaug.Quantize(n_levels=50).augment(X))
+            ret.append(tsaug.Quantize(n_levels=100).augment(X))
         if i == 6:
             term = tsaug.Resize(size=100).augment(X)
             ret.append(tail_padding_zero(term, len(X)))
         if i == 7:
             ret.append(tsaug.Reverse().augment(X))
         if i == 8:
-            ret.append(tsaug.TimeWarp(n_speed_change=10, max_speed_ratio=3).augment(X))
+            ret.append(tsaug.TimeWarp(n_speed_change=20, max_speed_ratio=6).augment(X))
     
     return ret
 
