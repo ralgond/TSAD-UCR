@@ -9,7 +9,7 @@ unzip the downloaded data to ".data".
 |solution name|score|directory|resources|
 |-------------|-----|---------|---------|
 | genta       | 83.6|genta    |[Video](https://www.youtube.com/watch?v=J_Ebbql9jCo)|
-| Augment | 66.4 | Augment | 参考[Paper](https://arxiv.org/pdf/1812.04606.pdf)|
+| Augment | 66.8 | Augment | 参考[Paper](https://arxiv.org/pdf/1812.04606.pdf)|
 | matrix-profile-1| 52.8| matrixprofile-1| |
 | deep svdd (tf) | 44.4 | deep_svdd-tf | 参考[Code](https://github.com/lukasruff/Deep-SVDD-PyTorch)|
 | LOF | 42.8 | LOF | 参考[Doc](https://scikit-learn.org/stable/modules/generated/sklearn.neighbors.LocalOutlierFactor.html) |
