@@ -6,6 +6,8 @@ import torch.nn.functional as F
 import torch
 import numpy as np
 import random
+import tsaug
+import rolling
 
 class UCRDataset(Dataset):
     def __init__(self, ts, win_size) -> None:
@@ -60,3 +62,92 @@ def set_seed(seed):
     # https://pytorch.org/docs/stable/notes/randomness.html
     torch.backends.cudnn.deterministic = True
     torch.backends.cudnn.benchmark = False
+
+
+def create_window_list(data, win_size):
+    ret = []
+
+    for i in range(len(data)-win_size+1):
+        term = data[i:i+win_size]
+        ret.append(term)
+
+    return ret
+
+def minmax_scale(l_):
+    l = np.array(l_)
+    l_min = l.min()
+    l_max = l.max()
+    ret = (l - l_min) / (l_max - l_min)
+    return ret.tolist()
+
+def tail_padding_zero(l, length):
+    ret = []
+    ret.extend(l)
+    for i in range(length - len(l)):
+        ret.append(0)
+    return ret
+
+def aggregate(ts, win_size=10):
+    return list(rolling.Mean(ts, win_size))
+
+def augament(ts):
+    ret = []
+    for _ in range(1,3):
+        i = random.randint(0,100) % 9
+        X = np.array(ts)
+        if i == 0:
+            ret.append(tsaug.AddNoise(scale=0.1).augment(X))
+        if i == 1:
+            ret.append(tsaug.Convolve(window="flattop", size=20).augment(X))
+        if i == 2:
+            term = tsaug.Crop(size=100).augment(X)
+            ret.append(tail_padding_zero(term, len(X)))
+        if i == 3:
+            ret.append(tsaug.Drift(max_drift=0.7, n_drift_points=20).augment(X))
+        if i == 4:
+            ret.append(tsaug.Pool(size=40).augment(X))
+        if i == 5:
+            ret.append(tsaug.Quantize(n_levels=100).augment(X))
+        if i == 6:
+            term = tsaug.Resize(size=100).augment(X)
+            ret.append(tail_padding_zero(term, len(X)))
+        if i == 7:
+            ret.append(tsaug.Reverse().augment(X))
+        if i == 8:
+            ret.append(tsaug.TimeWarp(n_speed_change=20, max_speed_ratio=6).augment(X))
+    
+    return ret
+
+
+class DataWithLable:
+    def __init__(self, slice, label) -> None:
+        self.slice = slice
+        self.label = label
+
+class TrainDataset(Dataset):
+    def __init__(self, pos_ts, neg_ts) -> None:
+        super().__init__()
+        self.ts = []
+        for pos in pos_ts:
+            self.ts.append(DataWithLable(pos, 1))
+        for neg in neg_ts:
+            self.ts.append(DataWithLable(neg, 0))
+
+    def __len__(self):
+        return len(self.ts)
+
+    def __getitem__(self, index):
+        item = self.ts[index]
+        return torch.tensor(item.slice, dtype=torch.float32), torch.tensor(item.label, dtype=torch.float32)
+
+class TestDataset(Dataset):
+    def __init__(self, ts) -> None:
+        super().__init__()
+        self.ts = ts
+
+    def __len__(self):
+        return len(self.ts)
+
+    def __getitem__(self, index):
+        item = self.ts[index]
+        return torch.tensor(item, dtype=torch.float32)

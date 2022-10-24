@@ -1,11 +1,7 @@
-from cProfile import label
-import random
 from ucr_dataset import get_series
 import numpy as np
-from sklearn.preprocessing import MinMaxScaler
-from sklearn.ensemble import IsolationForest
 import time
-import tsaug
+
 
 import torch
 import torch.nn as nn
@@ -14,61 +10,9 @@ import torch.nn.functional as F
 from torch.utils.data import DataLoader
 from torch.utils.data import Dataset
 
-from common import set_seed
-import rolling
-
-def create_window_list(data, win_size):
-    ret = []
-
-    for i in range(len(data)-win_size+1):
-        term = data[i:i+win_size]
-        ret.append(term)
-
-    return ret
-
-def minmax_scale(l_):
-    l = np.array(l_)
-    l_min = l.min()
-    l_max = l.max()
-    ret = (l - l_min) / (l_max - l_min)
-    return ret.tolist()
-    
-
-def tail_padding_zero(l, length):
-    ret = []
-    ret.extend(l)
-    for i in range(length - len(l)):
-        ret.append(0)
-    return ret
+from common import set_seed, TrainDataset, TestDataset, minmax_scale, create_window_list, augament
 
 
-def augament(ts):
-    ret = []
-    for _ in range(1,3):
-        i = random.randint(0,100) % 9
-        X = np.array(ts)
-        if i == 0:
-            ret.append(tsaug.AddNoise(scale=0.1).augment(X))
-        if i == 1:
-            ret.append(tsaug.Convolve(window="flattop", size=20).augment(X))
-        if i == 2:
-            term = tsaug.Crop(size=100).augment(X)
-            ret.append(tail_padding_zero(term, len(X)))
-        if i == 3:
-            ret.append(tsaug.Drift(max_drift=0.7, n_drift_points=20).augment(X))
-        if i == 4:
-            ret.append(tsaug.Pool(size=40).augment(X))
-        if i == 5:
-            ret.append(tsaug.Quantize(n_levels=100).augment(X))
-        if i == 6:
-            term = tsaug.Resize(size=100).augment(X)
-            ret.append(tail_padding_zero(term, len(X)))
-        if i == 7:
-            ret.append(tsaug.Reverse().augment(X))
-        if i == 8:
-            ret.append(tsaug.TimeWarp(n_speed_change=20, max_speed_ratio=6).augment(X))
-    
-    return ret
 
 class AugmentNet(nn.Module):
     def __init__(self) -> None:
@@ -95,40 +39,11 @@ class AugmentNet(nn.Module):
         x = self.fc1(x)
         x = self.fc2(x)
 
+        print ("============>x.shape:", x.shape)
+
         return torch.sigmoid(x)
 
-class DataWithLable:
-    def __init__(self, slice, label) -> None:
-        self.slice = slice
-        self.label = label
 
-class TrainDataset(Dataset):
-    def __init__(self, pos_ts, neg_ts) -> None:
-        super().__init__()
-        self.ts = []
-        for pos in pos_ts:
-            self.ts.append(DataWithLable(pos, 1))
-        for neg in neg_ts:
-            self.ts.append(DataWithLable(neg, 0))
-
-    def __len__(self):
-        return len(self.ts)
-
-    def __getitem__(self, index):
-        item = self.ts[index]
-        return torch.tensor(item.slice, dtype=torch.float32), torch.tensor(item.label, dtype=torch.float32)
-
-class TestDataset(Dataset):
-    def __init__(self, ts) -> None:
-        super().__init__()
-        self.ts = ts
-
-    def __len__(self):
-        return len(self.ts)
-
-    def __getitem__(self, index):
-        item = self.ts[index]
-        return torch.tensor(item, dtype=torch.float32)
 
 
 class Channel:
@@ -138,6 +53,7 @@ class Channel:
         self.neg_samples = neg_samples
 
         self.model = AugmentNet()
+        #self.model = UNet()
         self.optimizer = torch.optim.Adam(self.model.parameters(), 5e-4)
         self.loss_fn = torch.nn.BCELoss()
 
@@ -192,8 +108,7 @@ class Channel:
             print ("==============>scores.len:", len(scores))        
         return scores
 
-def aggregate(ts, win_size=10):
-    return list(rolling.Mean(ts, win_size))
+
 
 def main(file_no):
     set_seed(file_no)
