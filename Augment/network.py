@@ -2,7 +2,38 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-class UNet(nn.Module):
+
+class SimpleCnnNet(nn.Module):
+    def __init__(self) -> None:
+        super().__init__()
+        self.pool = nn.MaxPool1d(2)
+        self.conv1 = nn.Conv1d(1, 8, 15, padding='same')
+        self.bn1 = nn.BatchNorm1d(8)
+        self.dropout1 = nn.Dropout(0.3)
+        self.conv2 = nn.Conv1d(8, 16, 15, padding='same')
+        self.bn2 = nn.BatchNorm1d(16)
+        self.dropout2 = nn.Dropout(0.3)
+        self.fc1 = nn.Linear(512, 64)
+        self.fc2 = nn.Linear(64, 1)
+
+    def forward(self, x):
+        x = self.conv1(x)
+        x = self.bn1(x)
+        x = F.relu(x)
+        x = self.pool(x)
+
+        x = self.conv2(x)
+        x = self.bn2(x)
+        x = F.relu(x)
+        x = self.pool(x)
+
+        x = torch.flatten(x, 1)
+        x = self.fc1(x)
+        x = self.fc2(x)
+
+        return torch.sigmoid(x)
+
+class UNet2(nn.Module):
 
     def ConvBNRelu(self, inc, outc, ks):
         return nn.Sequential(
@@ -122,17 +153,97 @@ class LSTM0(nn.Module):
 
     def forward(self, x):
         out, _ = self.lstm(x)
-        print ("out.shape:", out.shape)
-        return self.fc(out[:,-1,:])
+        #print ("out.shape:", out.shape)
+        return torch.sigmoid(self.fc(out[:,-1,:]))
+
+
+class UNet4(nn.Module):
+
+    def ConvBNRelu(self, inc, outc, ks):
+        return nn.Sequential(
+            nn.Conv1d(inc, outc, ks, padding='same', bias=False),
+            nn.BatchNorm1d(outc),
+            nn.ReLU(),
+            nn.Conv1d(outc, outc, ks, padding='same', bias=False),
+            nn.BatchNorm1d(outc),
+            nn.ReLU()
+        )
+
+    def UpsampleConv(self, inc, outc, ks):
+        return nn.Sequential(
+            nn.Upsample(scale_factor=4),
+            nn.Conv1d(inc, outc, ks, padding='same'),
+        )
+
+    def LastLayer(self, inc, outc, ks):
+        return nn.Sequential(
+            nn.Conv1d(inc, outc, ks, padding='same')
+        )
+
+    def forward(self, x):
+        # 128
+        conv1 = self.layer1(x)
+        pool1 = self.pool(conv1)
+
+        # 32
+        conv2 = self.layer2(pool1)
+        pool2 = self.pool(conv2)
+
+        # 8
+        conv3 = self.layer3(pool2)
+
+        up3 = self.uc3(conv3)
+
+        merge4 = torch.cat((conv2, up3), dim=1)
+        # 32
+        conv4 = self.layer4(merge4)
+
+        up4 = self.uc4(conv4)
+        merge5 = torch.cat((conv1, up4), dim=1)
+        # 128
+        conv5 = self.layer5(merge5)
+
+
+        x = torch.flatten(self.output(conv5), 1)
+        x = self.fc(x)
+        return torch.sigmoid(x)
+
+    def __init__(self) -> None:
+        super().__init__()
+
+        self.pool = nn.MaxPool1d(4)
+
+        KS = 5
+
+        # 128
+        self.layer1 = self.ConvBNRelu(1, 16, KS)
+        # 32
+        self.layer2 = self.ConvBNRelu(16, 32, KS)
+        # 8
+        self.layer3 = self.ConvBNRelu(32, 64, KS)
+        # 32
+        self.layer4 = self.ConvBNRelu(64, 32, KS)
+        # 128
+        self.layer5 = self.ConvBNRelu(32, 16, KS)
+
+
+        self.uc3 = self.UpsampleConv(64, 32, KS)
+
+        self.uc4 = self.UpsampleConv(32, 16, KS)
+
+        self.output = self.LastLayer(16, 1, KS)
+
+        self.fc = nn.Linear(128, 1)
+
 
 if __name__ == "__main__":
 
-    # net = UNet()
-    # data = torch.randn(64, 1, 128)
-    # result = net(data)
-    # print(result.shape)
-
-    l = LSTM0(input_size=1, hidden_size=128, num_layers=2, num_classes=1)
-    data = torch.randn(64, 128, 1)
-    result = l(data)
+    net = UNet4()
+    data = torch.randn(64, 1, 128)
+    result = net(data)
     print(result.shape)
+
+    # l = LSTM0(input_size=1, hidden_size=128, num_layers=2, num_classes=1)
+    # data = torch.randn(64, 128, 1)
+    # result = l(data)
+    # print(result.shape)

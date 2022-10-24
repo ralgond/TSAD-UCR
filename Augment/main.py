@@ -11,39 +11,7 @@ from torch.utils.data import DataLoader
 from torch.utils.data import Dataset
 
 from common import set_seed, TrainDataset, TestDataset, minmax_scale, create_window_list, augament
-
-
-
-class AugmentNet(nn.Module):
-    def __init__(self) -> None:
-        super().__init__()
-        self.pool = nn.MaxPool1d(2)
-        self.conv1 = nn.Conv1d(1, 8, 15, padding='same')
-        self.bn1 = nn.BatchNorm1d(8)
-        self.conv2 = nn.Conv1d(8, 16, 15, padding='same')
-        self.bn2 = nn.BatchNorm1d(16)
-        self.fc1 = nn.Linear(512, 64)
-        self.fc2 = nn.Linear(64, 1)
-
-    def forward(self, x):
-        x = self.conv1(x)
-        x = self.bn1(x)
-        x = F.relu(x)
-        x = self.pool(x)
-
-        x = self.conv2(x)
-        x = self.bn2(x)
-        x = F.relu(x)
-        x = self.pool(x)
-        x = torch.flatten(x, 1)
-        x = self.fc1(x)
-        x = self.fc2(x)
-
-        print ("============>x.shape:", x.shape)
-
-        return torch.sigmoid(x)
-
-
+from network import UNet4, SimpleCnnNet
 
 
 class Channel:
@@ -52,8 +20,8 @@ class Channel:
         self.pos_samples = pos_samples
         self.neg_samples = neg_samples
 
-        self.model = AugmentNet()
-        #self.model = UNet()
+        self.model = SimpleCnnNet()
+        #self.model = UNet4()
         self.optimizer = torch.optim.Adam(self.model.parameters(), 5e-4)
         self.loss_fn = torch.nn.BCELoss()
 
@@ -64,11 +32,11 @@ class Channel:
 
         dataset = TrainDataset(self.pos_samples, self.neg_samples)
         train_loader = DataLoader(dataset, batch_size=128, shuffle=True)
+        self.model.train()
 
         for epoch in range(10):
             loss_epoch = 0.
             batch_epoch = 0
-            self.model.train()
             #print ("train_data.len:", len(dataset))
             for i, (slice, label) in enumerate(train_loader):
                 self.optimizer.zero_grad()
@@ -78,7 +46,7 @@ class Channel:
                 out = self.model(input_data)
                 out = out.squeeze(-1).float()
 
-                label = torch.tensor(label).cuda()
+                label = label.cuda()
                 loss = self.loss_fn(out, label)
 
                 loss.backward()
