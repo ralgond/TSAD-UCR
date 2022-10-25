@@ -34,7 +34,7 @@ class Channel:
         train_loader = DataLoader(dataset, batch_size=128, shuffle=True)
         self.model.train()
 
-        for epoch in range(10):
+        for epoch in range(15):
             loss_epoch = 0.
             batch_epoch = 0
             #print ("train_data.len:", len(dataset))
