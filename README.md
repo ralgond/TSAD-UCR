@@ -2,8 +2,9 @@
 Time Series Anomaly Detection Solutions for KDD2021 UCR dataset
 
 ## How to run
-Download ucr data from [here](https://github.com/ralgond/KDD2021-UCR), and create a directory named ".data" in this repo directory,
+1. Download ucr data from [here](https://github.com/ralgond/KDD2021-UCR), and create a directory named ".data" in this repo directory,
 unzip the downloaded data to ".data".
+2. Enter a directory, such as Augment, install package according to "requirements.txt", and execute "python main.py".
 
 ## 得分
 |solution name|score|directory|resources|
