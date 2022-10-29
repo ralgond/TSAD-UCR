@@ -13,7 +13,6 @@ unzip the downloaded data to ".data".
 | matrix-profile-1| 52.8| matrixprofile-1| 参考[Page](https://www.cs.ucr.edu/~eamonn/MatrixProfile.html) |
 | deep svdd (tf) | 44.4 | deep_svdd-tf | 参考[Code](https://github.com/lukasruff/Deep-SVDD-PyTorch)|
 | LOF | 42.8 | LOF | 参考[Doc](https://scikit-learn.org/stable/modules/generated/sklearn.neighbors.LocalOutlierFactor.html) |
-| deep svdd (torch)  | 32.8| deep_svdd | 参考[Code](https://github.com/lukasruff/Deep-SVDD-PyTorch)|
 | vanilla_ae  | 29.2| ae-torch/ae_conv.py ||
 | vanilla_vae | 27.6| ae-tf/vae.py | 参考[Doc](https://keras.io/examples/generative/vae/)|
 | Isolation Forest | 23.6 | IF| 参考[Doc](https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.IsolationForest.html) |
