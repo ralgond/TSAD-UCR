@@ -1,0 +1,3 @@
+tsaug==0.2.1
+rolling
+# you should install torch==1.10.0
