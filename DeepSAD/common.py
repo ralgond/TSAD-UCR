@@ -92,7 +92,7 @@ def aggregate(ts, win_size=10):
 
 def augament(ts):
     ret = []
-    for _ in range(1,2):
+    for _ in range(1,3):
         i = random.randint(0,100) % 9
         X = np.array(ts)
         if i == 0:

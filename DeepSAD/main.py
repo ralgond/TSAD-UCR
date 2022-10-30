@@ -111,7 +111,7 @@ class Channel:
         
         self.net.train()
 
-        for epoch in range(15):
+        for epoch in range(10):
             
             loss_epoch = 0.
             batch_epoch = 0
