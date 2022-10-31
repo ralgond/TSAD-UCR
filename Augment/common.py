@@ -83,6 +83,8 @@ def minmax_scale(l_):
 def tail_padding_zero(l, length):
     ret = []
     ret.extend(l)
+    if length - len(l) <= 0:
+        return ret
     for i in range(length - len(l)):
         ret.append(0)
     return ret
