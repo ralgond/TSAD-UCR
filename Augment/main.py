@@ -11,7 +11,7 @@ from torch.utils.data import DataLoader
 from torch.utils.data import Dataset
 
 from common import set_seed, TrainDataset, TestDataset, minmax_scale, create_window_list, augament
-from network import UNet4, SimpleCnnNet
+from network import SimpleCnnNet
 
 
 class Channel:
