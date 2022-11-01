@@ -12,7 +12,9 @@ from torch.utils.data import Dataset
 
 from common import set_seed, TrainDataset, TestDataset, minmax_scale, create_window_list, augament
 from network import SimpleCnnNet
-
+from network_resnet import SimpleResnet
+from network_multi_scale import MSResNet
+from network_resnet import SimpleResnet
 
 class Channel:
     def __init__(self, id, pos_samples, neg_samples) -> None:
@@ -22,6 +24,9 @@ class Channel:
 
         self.model = SimpleCnnNet()
         #self.model = UNet4()
+        #self.model = SimpleResnet()
+        #self.model = MSResNet(input_channel=1)
+        #self.model = SimpleResnet()
         self.optimizer = torch.optim.Adam(self.model.parameters(), 5e-4)
         self.loss_fn = torch.nn.BCELoss()
 
@@ -53,7 +58,7 @@ class Channel:
                 self.optimizer.step()
 
                 batch_epoch += 1
-                loss_epoch += loss.cpu().item()
+                loss_epoch += loss.item()
             print (f"epoch:{epoch}, loss:{loss_epoch/batch_epoch:.5f}")
             
     def predict(self, test_list):
@@ -70,9 +75,10 @@ class Channel:
                 input_data = input_data.unsqueeze(1) #增加通道
                 out = self.model(input_data)
                 out = out.squeeze(-1).float()
-
-                for item in out:
-                    scores.append(item.cpu().item())
+                if (len(out.shape) > 0):
+                    # TypeError: iteration over a 0-d tensor
+                    for item in out:
+                        scores.append(item.cpu().item())
             print ("==============>scores.len:", len(scores))        
         return scores
 
