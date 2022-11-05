@@ -1,3 +1,5 @@
+import os
+
 from torch.utils.data import Dataset
 import torch
 import torch.nn as nn
@@ -51,6 +53,7 @@ def set_seed(seed):
 
     random.seed(seed)
     np.random.seed(seed)
+    os.environ['PYTHONHASHSEED'] = str(seed)
     if torch.cuda.is_available():
         torch.cuda.manual_seed_all(seed)
 
@@ -153,3 +156,11 @@ class TestDataset(Dataset):
     def __getitem__(self, index):
         item = self.ts[index]
         return torch.tensor(item, dtype=torch.float32)
+
+class residual_block:
+    def __init__(self, desc) -> None:
+        pass
+    def __enter__ (self):
+        pass
+    def __exit__ (self, exc_type, exc_value, traceback):
+        pass

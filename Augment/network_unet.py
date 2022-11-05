@@ -175,21 +175,21 @@ class UNet4(nn.Module):
         KS = 5
 
         # 128
-        self.layer1 = self.ConvBNRelu(1, 16, KS)
+        self.layer1 = self.ConvBNRelu(1, 16, 31)
         # 32
-        self.layer2 = self.ConvBNRelu(16, 32, KS)
+        self.layer2 = self.ConvBNRelu(16, 32, 11)
         # 8
-        self.layer3 = self.ConvBNRelu(32, 64, KS)
+        self.layer3 = self.ConvBNRelu(32, 64, 5)
         # 32
-        self.layer4 = self.ConvBNRelu(64, 32, KS)
+        self.layer4 = self.ConvBNRelu(64, 32, 11)
         # 128
-        self.layer5 = self.ConvBNRelu(32, 16, KS)
+        self.layer5 = self.ConvBNRelu(32, 16, 31)
 
 
-        self.uc3 = self.UpsampleConv(64, 32, KS)
+        self.uc3 = self.UpsampleConv(64, 32, 11)
 
-        self.uc4 = self.UpsampleConv(32, 16, KS)
+        self.uc4 = self.UpsampleConv(32, 16, 11)
 
-        self.output = self.LastLayer(16, 1, KS)
+        self.output = self.LastLayer(16, 1, 11)
 
         self.fc = nn.Linear(128, 1)

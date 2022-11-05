@@ -1,7 +1,7 @@
 from ucr_dataset import get_series
 import numpy as np
 import time
-
+import random
 
 import torch
 import torch.nn as nn
@@ -11,10 +11,9 @@ from torch.utils.data import DataLoader
 from torch.utils.data import Dataset
 
 from common import set_seed, TrainDataset, TestDataset, minmax_scale, create_window_list, augament
+
 from network import SimpleCnnNet
-from network_resnet import SimpleResnet
-from network_multi_scale import MSResNet
-from network_resnet import SimpleResnet
+from network2 import SimpleCnnNet2
 
 class Channel:
     def __init__(self, id, pos_samples, neg_samples) -> None:
@@ -22,11 +21,10 @@ class Channel:
         self.pos_samples = pos_samples
         self.neg_samples = neg_samples
 
-        self.model = SimpleCnnNet()
+        self.model = SimpleCnnNet2()
+        #self.model = SimpleCnnNet()
         #self.model = UNet4()
-        #self.model = SimpleResnet()
-        #self.model = MSResNet(input_channel=1)
-        #self.model = SimpleResnet()
+        
         self.optimizer = torch.optim.Adam(self.model.parameters(), 5e-4)
         self.loss_fn = torch.nn.BCELoss()
 
@@ -52,10 +50,11 @@ class Channel:
                 out = out.squeeze(-1).float()
 
                 label = label.cuda()
-                loss = self.loss_fn(out, label)
+                if (len(out.shape) > 0):
+                    loss = self.loss_fn(out, label)
 
-                loss.backward()
-                self.optimizer.step()
+                    loss.backward()
+                    self.optimizer.step()
 
                 batch_epoch += 1
                 loss_epoch += loss.item()
@@ -105,6 +104,8 @@ def main(file_no):
             train_neg_data.append(augamented_neg)
     print("aug_time:", (time.time() - start_time))
 
+    set_seed(file_no)
+
     channel = Channel(file_no, train_pos_list, train_neg_data)
     channel.train()
 
@@ -122,8 +123,10 @@ if __name__ == "__main__":
     correct_cnt = 0
     error_cnt = 0
 
+    of = open(".error.txt", "w+")
     ret = None
-    for i in range(1,251):
+    #for i in [157,161,173,174,175,180,181,183,185,186,187,188,189,190,195,196,200]:
+    for i in range(1,51):
         if i in [239,240,241]:
             ret = -1
         else:
@@ -133,5 +136,8 @@ if __name__ == "__main__":
             correct_cnt += 1
             print (f"({i}) correct, ==========>correct_cnt:{correct_cnt}, error_cnt:{error_cnt}")
         else:
+            of.write(f"{i}\n")
+            of.flush()
             error_cnt += 1
             print (f"({i}) error, ============>correct_cnt:{correct_cnt}, error_cnt:{error_cnt}")
+    of.close()

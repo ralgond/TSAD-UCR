@@ -2,7 +2,6 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-
 class SimpleCnnNet(nn.Module):
     def __init__(self) -> None:
         super().__init__()
@@ -42,3 +41,5 @@ class SimpleCnnNet(nn.Module):
         x = self.fc2(x)
 
         return torch.sigmoid(x)
+
+
