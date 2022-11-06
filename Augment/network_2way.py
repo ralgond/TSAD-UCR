@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-class SimpleCnnNet2(nn.Module):
+class Cnn2way(nn.Module):
     def __init__(self) -> None:
         super().__init__()
         self.pool = nn.AvgPool1d(2)
@@ -21,8 +21,8 @@ class SimpleCnnNet2(nn.Module):
         self.conv3_1 = nn.Conv1d(16, 32, 11, padding='same')
         self.bn3_1 = nn.BatchNorm1d(32)
 
-        self.fc1 = nn.Linear(512, 64)
-        self.fc2 = nn.Linear(64, 1)
+        self.fc1 = nn.Linear(1024, 128)
+        self.fc2 = nn.Linear(128, 1)
 
     def forward(self, x):
         x0 = self.conv1(x)
@@ -53,10 +53,10 @@ class SimpleCnnNet2(nn.Module):
         #print ("x.shape:",x.shape,"y.shape:",y.shape)
         out = torch.cat((x, y), dim=1)
 
-        x = torch.flatten(x, 1)
-        x = self.fc1(x)
-        x = self.fc2(x)
+        out = torch.flatten(out, 1)
+        out = self.fc1(out)
+        out = self.fc2(out)
 
-        return torch.sigmoid(x)
+        return torch.sigmoid(out)
 
 
