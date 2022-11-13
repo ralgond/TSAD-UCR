@@ -97,8 +97,16 @@ def aggregate(ts, win_size=10):
 
 def augament(ts):
     ret = []
+    i_list = []
     for _ in range(1,3):
-        i = random.randint(0,100) % 9
+        while True:
+            i = random.randint(0,100) % 9
+            if i in i_list:
+                continue
+            else:
+                i_list.append(i)
+                break
+
         X = np.array(ts)
         if i == 0:
             ret.append(tsaug.AddNoise(scale=0.1).augment(X))

@@ -12,9 +12,7 @@ from torch.utils.data import Dataset
 
 from common import set_seed, TrainDataset, TestDataset, minmax_scale, create_window_list, augament
 
-from network import SimpleCnnNet
 from network_2way import Cnn2way
-from network_3way import Cnn3way
 
 class Channel:
     def __init__(self, id, pos_samples, neg_samples) -> None:
@@ -22,13 +20,12 @@ class Channel:
         self.pos_samples = pos_samples
         self.neg_samples = neg_samples
 
-        #self.model = Cnn2way()
-        self.model = Cnn3way()
-        #self.model = SimpleCnnNet()
-        #self.model = UNet4()
+        self.model = Cnn2way()
         
-        self.optimizer = torch.optim.Adam(self.model.parameters(), 5e-4)
+        
+        self.optimizer = torch.optim.Adam(self.model.parameters(), 5e-5)
         self.loss_fn = torch.nn.BCELoss()
+        self.scheduler = torch.optim.lr_scheduler.MultiStepLR(self.optimizer, milestones=(), gamma=0.1)
 
         self.model.cuda()
 
@@ -40,9 +37,10 @@ class Channel:
         self.model.train()
 
         for epoch in range(15):
+            # if epoch > 0:
+            #     self.scheduler.step()
             loss_epoch = 0.
             batch_epoch = 0
-            #print ("train_data.len:", len(dataset))
             for i, (slice, label) in enumerate(train_loader):
                 self.optimizer.zero_grad()
 
@@ -127,8 +125,8 @@ if __name__ == "__main__":
 
     of = open(".error.txt", "w+")
     ret = None
-    #for i in [157,161,173,174,175,180,181,183,185,186,187,188,189,190,195,196,200]:
-    for i in range(101,151):
+    
+    for i in range(1, 251):
         if i in [239,240,241]:
             ret = -1
         else:

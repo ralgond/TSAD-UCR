@@ -30,6 +30,10 @@ class Cnn3way(nn.Module):
         self.fc1 = nn.Linear(384, 64)
         self.fc2 = nn.Linear(64, 1)
 
+    def merge(self, x, y, z):
+        out = torch.cat((x, y, z), dim=1)
+        return out
+
     def forward(self, x):
         x0 = self.conv1(x)
         x0 = self.bn1(x0)
@@ -56,18 +60,18 @@ class Cnn3way(nn.Module):
         y = F.relu(y)
         y = self.pool(y)
 
-        z = self.conv3(x0)
-        z = self.bn3(z)
+        z = self.conv4(x0)
+        z = self.bn4(z)
         z = F.relu(z)
         z = self.pool(z)
 
-        z = self.conv3_1(z)
-        z = self.bn3_1(z)
+        z = self.conv4_1(z)
+        z = self.bn4_1(z)
         z = F.relu(z)
         z = self.pool(z)
 
         #print ("x.shape:",x.shape,"y.shape:",y.shape)
-        out = torch.cat((x, y, z), dim=1)
+        out = self.merge(x, y, z)
 
         out = torch.flatten(out, 1)
         out = self.fc1(out)
@@ -76,3 +80,8 @@ class Cnn3way(nn.Module):
         return torch.sigmoid(out)
 
 
+class Cnn3wayAdd(Cnn3way):
+    def __init__(self) -> None:
+        super().__init__()
+    def merge(self, x, y, z):
+        return torch.add(x, y, z)
