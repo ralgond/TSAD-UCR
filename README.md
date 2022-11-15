@@ -10,7 +10,7 @@ unzip the downloaded data to ".data".
 |solution name|score|directory|resources|
 |-------------|-----|---------|---------|
 | genta       | 83.6|genta    |[Video](https://www.youtube.com/watch?v=J_Ebbql9jCo)|
-| Augment (2way) | 71.6 | Augment | 参考[Paper](https://arxiv.org/pdf/1812.04606.pdf)|
+| Augment (3way) | 73.2 | Augment | 参考[Paper](https://arxiv.org/pdf/1812.04606.pdf)|
 | DeepSAD  | 64.8 | DeepSAD | 参考[Code](https://github.com/lukasruff/Deep-SAD-PyTorch)|
 | DeepSVDD  | 54.4 | DeepSVDD | 参考[Code](https://github.com/lukasruff/Deep-SVDD-PyTorch)|
 | matrix-profile-1| 52.8| matrixprofile-1| 参考[Page](https://www.cs.ucr.edu/~eamonn/MatrixProfile.html) |

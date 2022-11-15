@@ -13,14 +13,15 @@ from torch.utils.data import Dataset
 from common import set_seed, TrainDataset, TestDataset, minmax_scale, create_window_list, augament
 
 from network_2way import Cnn2way
-
+from network_3way import Cnn3way
 class Channel:
     def __init__(self, id, pos_samples, neg_samples) -> None:
         self.id = id
         self.pos_samples = pos_samples
         self.neg_samples = neg_samples
 
-        self.model = Cnn2way()
+        #self.model = Cnn2way()
+        self.model = Cnn3way()
         
         
         self.optimizer = torch.optim.Adam(self.model.parameters(), 5e-5)
