@@ -1,6 +1,10 @@
 # TSAD-UCR
 Time Series Anomaly Detection Solutions for KDD2021 UCR dataset
 
+## The rule
+
+https://compete.hexagon-ml.com/practice/competition/39/
+
 ## How to run
 1. Download ucr data from [here](https://github.com/ralgond/KDD2021-UCR), and create a directory named ".data" in this repo directory,
 unzip the downloaded data to ".data".
